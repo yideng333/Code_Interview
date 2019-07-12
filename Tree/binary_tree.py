@@ -26,6 +26,7 @@ class BinaryTree(object):
 
     def __init__(self):
         self.root = None
+        self.ans = []
 
     # 按照顺序增加节点(非递归)
     def add_node(self, x):
@@ -205,6 +206,44 @@ class BinaryTree(object):
         while output_stack:
             print(output_stack.pop())
 
+    # 层次遍历
+    def level_order(self):
+        res = []
+        # 根节点为空
+        if self.root is None:
+            return res
+        else:
+            queue = list()
+            queue.append(self.root)
+            while queue:
+                q = queue.pop(0)
+                print(q.val)
+                if q.left:
+                   queue.append(q.left)
+                if q.right:
+                    queue.append(q.right)
+
+    # 打印每层元素 (层次遍历)
+    def print_level_order(self):
+        res = []
+        # 根节点为空
+        if self.root is None:
+            return res
+        else:
+            queue = list()
+            queue.append(self.root)
+            while queue:
+                res.append([node.val for node in queue])
+                new_queue = []
+                for q in queue:
+                    if q.left:
+                        new_queue.append(q.left)
+                    if q.right:
+                        new_queue.append(q.right)
+                queue = new_queue
+
+        return res
+
     # 最大层数
     def depth(self, node):
         if node is None:
@@ -215,15 +254,85 @@ class BinaryTree(object):
 
         return max(left_depth, right_depth) + 1
 
+    def list_to_tree(self, node, elements_list):
+        start = 0
+        end = len(elements_list) - 1
+        mid = (end - start) // 2
+        # print(elements_list)
+        if node is None:
+            node = Node(elements_list[mid])
+
+        if len(elements_list) > 1:
+            if start < mid:
+                node.left = self.list_to_tree(node.left, elements_list[start:mid])
+            if mid < end:
+                node.right = self.list_to_tree(node.right, elements_list[mid+1:])
+            return node
+        else:
+            return node
+
+    # 路径之和
+    def path_sum(self, node, num):
+        if node is None:
+            return False
+
+        if not node.left and not node.right:
+            return node.val == num
+
+        left = self.path_sum(node.left, num-node.val)
+        right = self.path_sum(node.right, num-node.val)
+        return left or right
+
+    # 路径之和，返回路径
+    def path_sum_2(self, node, num, path):
+        if node is None:
+            return
+        # 节点是叶子节点且值满足条件
+        # if not node.left and not node.right and node.val == num:
+        #     self.ans.append(path + [node.val])
+
+        # 任意节点的值满足条件
+        if node.val == num:
+            self.ans.append(path + [node.val])
+
+        # if node.left:
+        self.path_sum_2(node.left, num-node.val, path + [node.val])
+        # if node.right:
+        self.path_sum_2(node.right, num-node.val, path + [node.val])
+
+    # 路径之和(任意起点和终点)
+    def path_sum_3(self, node, num, path):
+        if node is None:
+            return
+
+        self.path_sum_2(node, num, path)
+        self.path_sum_3(node.left, num, path)
+        self.path_sum_3(node.right, num, path)
+
+    # 根据前序和中序顺序构造二叉树
+    def buildTree(self, preorder, inorder):
+        """
+        :type preorder: List[int]
+        :type inorder: List[int]
+        :rtype: TreeNode
+        """
+        if inorder:
+            ind = inorder.index(preorder.pop(0))
+            root = Node(inorder[ind])
+            root.left = self.buildTree(preorder, inorder[:ind])
+            root.right = self.buildTree(preorder, inorder[ind + 1:])
+            return root
+        return None
+
 
 if __name__ == '__main__':
     tree = BinaryTree()
 
-    element_list = [5, 2, 1, 12, 6, 8, 13, 15, 20, 23]
-    tree.add_node_by_list(element_list, 'normal')
-    # tree.add_rank_node_by_list(element_list)
-    print(tree.get_dict_form())
-    pp.pprint(tree.get_dict_form())
+    # element_list = [5, 2, 1, 12, 6, 8, 13, 15, 20, 23]
+    # tree.add_node_by_list(element_list, 'normal')
+    # # tree.add_rank_node_by_list(element_list)
+    # print(tree.get_dict_form())
+    # pp.pprint(tree.get_dict_form())
 
     # 前序遍历
     # tree.pre_order_recursive(tree.root)
@@ -238,5 +347,34 @@ if __name__ == '__main__':
     # tree.post_order_nonrecursive()
 
     # 最大深度
-    depth = tree.depth(tree.root)
-    print(depth)
+    # depth = tree.depth(tree.root)
+    # print(depth)
+
+    # 层序遍历
+    # tree.level_order()
+
+    # 按层打印
+    # res = tree.print_level_order()
+    # print(res)
+
+    # 根据中序遍历序列构造二叉树
+    # element_list = [5, 2, 4, 7, 8, 9, 10, 13]
+    # tree.root = tree.list_to_tree(tree.root, element_list)
+    # tree.root = tree.list_to_tree_new(element_list, 0, len(element_list))
+    # print('-' * 20)
+    # print(res)
+
+    # 路径之和
+    # print(tree.path_sum(tree.root, 39))
+
+    # 路径之和3
+    # tree.path_sum_3(tree.root, 13, [])
+    # print(tree.ans)
+
+    # 根据前序和中序顺序构造二叉树
+    # preorder = [3, 9, 20, 15, 7]
+    # inorder = [9, 3, 15, 20, 7]
+    # tree.root = tree.buildTree(preorder, inorder)
+    # res = tree.print_level_order()
+    # print('-' * 20)
+    # print(res)
