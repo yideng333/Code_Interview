@@ -57,22 +57,22 @@ def insert_sort(array):
 
 # 希尔排序 (插入排序的升级版)
 def shell_sort(array):
+    def insert(array, gap):
+        for i in range(gap, len(array)):
+            j = i - gap
+            value = array[i]
+            while j >= 0 and array[j] > value:
+                array[j+gap] = array[j]
+                j -= gap
+            array[j+gap] = value
+
     gap = 1
     while gap < len(array):
         gap = gap * 3 + 1
     while gap > 0:
         print(gap)
-        for i in range(gap, len(array)):
-            value = array[i]
-            j = i - gap
-            # 从i-1的位置向前找到插入点
-            while j >= 0 and array[j] > value:
-                array[j + gap] = array[j]
-                j -= gap
-            # 插入元素
-            array[j + gap] = value
-            print(array)
-
+        # 每次按区间进行插入排序
+        insert(array, gap)
         gap = gap // 3
     return array
 
