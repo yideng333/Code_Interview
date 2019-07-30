@@ -11,15 +11,27 @@ class Node(object):
         self.next = None
 
 
-# 产生一个一个长度为l的链表
+# 构建一个长度为l的链表
 def generate_LNode(l):
     # 头节点
     head = Node(None)
-    pre = head
+    cur = head
     for i in range(l):
         temp = Node(i)
-        pre.next = temp
-        pre = temp
+        cur.next = temp
+        cur = temp
+    return head
+
+
+# 根据列表中的元素构建链表
+def generate_LNode_from_list(array):
+    # 头节点
+    head = Node(None)
+    cur = head
+    for i in array:
+        temp = Node(i)
+        cur.next = temp
+        cur = temp
     return head
 
 
